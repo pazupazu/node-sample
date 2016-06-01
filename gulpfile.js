@@ -1,11 +1,13 @@
 var gulp = require("gulp");
 var plumber = require("gulp-plumber");
+var notify = require('gulp-notify');
+var error = notify.onError('<%= error.message %>');
 
 // web
 var webserver  = require('gulp-webserver');
 gulp.task('serve', function() {
     gulp.src('./')
-        .pipe(plumber())
+        .pipe(plumber({errorHandler: error}))
         .pipe(webserver({
             livereload: true,
             fallback: 'index.html',
@@ -14,61 +16,52 @@ gulp.task('serve', function() {
 });
 
 // css
-var sass      = require('gulp-ruby-sass');
+var pleeease = require('gulp-pleeease');
+var sass = require('gulp-ruby-sass');
+gulp.task('css', function () {
+    gulp.src('./src/css/*.scss')
+        .pipe(plumber({errorHandler: error}))
+        .pipe(pleeease({
+            //scss: true,
+            sass: true,
+            autoprefixer:true,
+            minifier: true,
+            mqpacker: true,
+        }))
+        .pipe(gulp.dest('./assets/css/'));
+});
+
+
+
 gulp.task('sass', function () {
-    return sass('src/css/*.scss')
-        .pipe(plumber())
+    return sass('./src/css/*.scss')
+        .pipe(plumber({errorHandler: error}))
         .pipe(gulp.dest('./assets/css/'));
 });
 
 // js
-var browserify = require('browserify');
-var watchify = require('watchify');
+var watchify = require('gulp-watchify');
 var babelify = require('babelify');
 var uglify = require('gulp-uglify');
-var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
+var streamify = require('gulp-streamify')
 
-function buildScript(file, watch) {
-    var props = {
-        entries: './src/js/' + file,
-        extensions: ['.js'],
-        debug: false,
-        cache: {},
-        packageCache: {},
-    };
-    var bundler = watch ? watchify(browserify(props)) : browserify(props);
-    bundler.transform(babelify, {presets: ['es2015']});
-
-    function rebundle() {
-        return bundler
-            .bundle()
-            .on("error", function (err) {
-                console.log("Error : " + err.message);
-                this.emit("end");
-            })
-            .pipe(plumber())
-            .pipe(source('./' + file))
-            //.pipe(buffer())
-            //.pipe(uglify())
-            .pipe(gulp.dest('./assets/js/'));
-    }
-    bundler.on('update', function(i) {
-        rebundle();
-    });
-    bundler.on('log', function(message) {
-        console.log(message);
-    });
-    return rebundle();
-}
-
+gulp.task('js', watchify(function(watchify) {
+    return gulp.src("./src/js/*.js")
+        .pipe(plumber({errorHandler: error}))
+        .pipe(watchify({
+            watch: true,
+            setup: function(bundle) {
+                bundle.transform(babelify, {presets: ['es2015']})
+            }
+        }))
+        .pipe(streamify(uglify()))
+        .pipe(gulp.dest('./assets/js/'))
+}))
 
 
 // script run
 gulp.task("watch", function() {
-    //gulp.watch("./_assets/**/*.js", ['create']);
-    gulp.watch('./src/css/*.scss', ['sass']);
-    buildScript("default.js", true)
+    gulp.watch('./src/css/*.scss', ['css']);
 });
 
-gulp.task('default', ['watch', 'serve']);
+gulp.task('default', ['js', 'watch', 'serve']);
