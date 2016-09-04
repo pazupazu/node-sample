@@ -18,5 +18,3 @@ new w.WOW({
     mobile:       true,       // trigger animations on mobile devices (default is true)
     live:         false,       // act on asynchronously loaded content (default is true)
 }).init();
-
-console.log(`test`)

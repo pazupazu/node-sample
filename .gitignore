@@ -33,4 +33,6 @@ node_modules
 .node_repl_history
 
 # User
-assets
+assets/css
+assets/js
+assets/img
