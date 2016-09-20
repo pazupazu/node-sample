@@ -19,9 +19,9 @@ var error = function(err) {
     /* 通知送る場合はchannel を設定してください */
 /*
 slack({
-url: 'https://hooks.slack.com/services/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',
+url: 'https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXXXX',
 user: 'gulp', // Optional
-icon_url: 'https://s3-us-west-2.amazonaws.com/slack-files2/avatars/2016-06-01/47272005910_246d6cb147bfb2bd4fab_48.png', // Optional
+icon_url: 'https://XXXXXXXXXXXXXXXXXXXXXXXX.png', // Optional
 //channel: '#alert', // Optional
 })(err.message);
 this.emit('end');
