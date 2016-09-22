@@ -36,3 +36,5 @@ node_modules
 assets/css
 assets/js
 assets/img
+.idea
+.sublime-gulp.cache
