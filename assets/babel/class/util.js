@@ -1,14 +1,21 @@
-/***
+/**
+ * 便利関数クラス
  * @user fiwashita@j-cast.com
- * @memo 便利関数クラス
  */
 
 export default class Util {
 
+    /**
+     * 初回
+     */
     constructor() {
         //this.debug()
     }
 
+    /**
+     * デバイスタイプの取得
+     * @return {string} デバイスタイプ
+     */
     get device() {
         const userAgent = navigator.userAgent;
         var ua = "pc"
@@ -21,6 +28,10 @@ export default class Util {
         return ua;
     }
 
+    /**
+     * インデックスかの判断
+     * @return {boolean} 可否
+     */
     get index() {
         const path = window.location.pathname;
         if (path.match(/^(\/www\/|\/)$/i)) {
@@ -29,6 +40,10 @@ export default class Util {
         return false;
     }
 
+    /**
+     * エントリーかの判断
+     * @return {boolean} 可否
+     */
     get entry() {
         const path = window.location.pathname;
         if (path.match(/\d{6}\.html$/i)) {
@@ -37,6 +52,10 @@ export default class Util {
         return false;
     }
 
+    /**
+     * URLパラメータからページ番号の取得
+     * @return {number} ページ番号
+     */
     get page() {
         const search = window.location.search;
         const match = search.match(/p=(\d+)/);
@@ -46,6 +65,10 @@ export default class Util {
         return 1;
     }
 
+    /**
+     * デバッグ
+     * @return
+     */
     debug() {
         const text = `hello ${this.device}!`;
         console.log(text);
