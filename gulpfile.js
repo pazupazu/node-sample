@@ -11,6 +11,7 @@ var paths = {
     scss : "./assets/scss/",
     css : "./assets/css/",
     img : "./assets/img/",
+    doc : "./assets/doc/",
 }
 
 // 通知送る場合はchannel を設定してください
@@ -70,9 +71,9 @@ gulp.task('scss', function () {
         //     image: paths.img
         // }))
 
-        //.pipe(sourcemaps.init())
+        .pipe(sourcemaps.init())
         .pipe(clean({compatibility: 'ie8'}))
-        //.pipe(sourcemaps.write())
+        .pipe(sourcemaps.write())
         .pipe(chmod(755))
         .pipe(gulp.dest(paths.css));
 });
@@ -82,11 +83,12 @@ var babelify = require('babelify');
 var watchify = require('gulp-watchify');
 var streamify = require('gulp-streamify')
 var uglify = require('gulp-uglify');
+var esdoc = require("gulp-esdoc");
 
 gulp.task('js', watchify(function(watchify) {
     return gulp.src(paths.babel + '*.js')
     .pipe(plumber({errorHandler: error}))
-    //.pipe(sourcemaps.init())
+    .pipe(sourcemaps.init())
     .pipe(watchify({
         watch: true,
         setup: function(bundle) {
@@ -94,10 +96,19 @@ gulp.task('js', watchify(function(watchify) {
         }
     }))
     .pipe(streamify(uglify()))
-    //.pipe(streamify(sourcemaps.write()))
+    .pipe(streamify(sourcemaps.write()))
     .pipe(chmod(755))
     .pipe(gulp.dest(paths.js))
 }))
+
+// DOC
+gulp.task('doc', function(cb) {
+    gulp.src(paths.babel)
+        .pipe(esdoc({
+            destination: paths.doc,
+            access: ["public", "private"]
+        }));
+});
 
 // COMMON
 gulp.task('css', function(){
